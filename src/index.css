@@ -1,5 +1,45 @@
 body {
-    background-color: #0d2235;
+    background: linear-gradient(368deg, #0d2235, #0d2235, #bfff00);
+    background-size: 600% 350%;
+    -webkit-animation: AnimationName 13s ease infinite;
+    -moz-animation: AnimationName 13s ease infinite;
+    animation: AnimationName 13s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0% {
+        background-position: 0% 14%
+    }
+    50% {
+        background-position: 100% 87%
+    }
+    100% {
+        background-position: 0% 14%
+    }
+}
+
+@-moz-keyframes AnimationName {
+    0% {
+        background-position: 0% 14%
+    }
+    50% {
+        background-position: 100% 87%
+    }
+    100% {
+        background-position: 0% 14%
+    }
+}
+
+@keyframes AnimationName {
+    0% {
+        background-position: 0% 14%
+    }
+    50% {
+        background-position: 100% 87%
+    }
+    100% {
+        background-position: 0% 14%
+    }
 }
 
 .error {

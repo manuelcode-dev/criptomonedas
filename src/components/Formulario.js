@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 
+
+import Error from './Error';
+
 import useMoneda from '../Hooks/useMoneda';
 import useCriptomoneda from '../Hooks/useCriptomoneda';
 import axios from 'axios';
@@ -11,11 +14,11 @@ const Boton = styled.input`
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-    background-color: #66a2fe;
+    background-color: yellowgreen;
     border: none;
     width: 100%;
     border-radius:10px;
-    color: white;
+    color: #0d2235;
     transition: background-color .3s ease;
 
     &::hover {
@@ -23,49 +26,69 @@ const Boton = styled.input`
         cursor: pointer;
     }
 
-`;
+`
 
 
-const Formulario = () => {
+const Formulario = ({ guardarMoneda, guardarCriptomoneda }) => {
 
     //state del listado de criptomonedas
     const [listacripto, guardarCriptomonedas] = useState([]);
+    const [error, guardarError] = useState(false);
 
 
-    const MONEDAS = [
-        {codigo: 'USD', nombre: 'Dolar Americano'},
-        {codigo: 'EUR', nombre: 'Euro'},
-        {codigo: 'MXN', nombre: 'Peso Mexicano'},
-        {codigo: 'CAD', nombre: 'Dolar Canadiense'},
-        {codigo: 'COP', nombre: 'Peso Colombiano'},
-        {codigo: 'ARS', nombre: 'Peso Argentino'},
-        {codigo: 'PEN', nombre: 'Sol'},
-        {codigo: 'GTQ', nombre: 'Quetzal'},
-        {codigo: 'VES', nombre: 'Bolivar'},
-        {codigo: 'BRL', nombre: 'Real Brasileño'}
-    ]
+        const MONEDAS = [
+            {codigo: 'USD', nombre: 'Dolar Americano'},
+            {codigo: 'EUR', nombre: 'Euro'},
+            {codigo: 'MXN', nombre: 'Peso Mexicano'},
+            {codigo: 'CAD', nombre: 'Dolar Canadiense'},
+            {codigo: 'COP', nombre: 'Peso Colombiano'},
+            {codigo: 'ARS', nombre: 'Peso Argentino'},
+            {codigo: 'PEN', nombre: 'Sol'},
+            {codigo: 'GTQ', nombre: 'Quetzal'},
+            {codigo: 'VES', nombre: 'Bolivar'},
+            {codigo: 'BRL', nombre: 'Real Brasileño'}
+        ];
 
     //Utilizar useMoneda
-    const [ moneda, SelectMonedas,  ] = useMoneda('Elige tu moneda', '', MONEDAS);
-
+    const [ moneda, SelectMonedas ] = useMoneda('Elige tu Moneda', '', MONEDAS);
+    
     //Utilizar useCriptomoneda
-    const [criptomoneda, SelectCripto] = useCriptomoneda('Elige tu Criptodivisa', '',listacripto);
+      const [ criptomoneda, SelectCripto ] = useCriptomoneda('Elige tu Criptomoneda', '', listacripto,);
 
-
-    //Utilizar llamado a la API
+    // Ejecutar llamado a la API
     useEffect(() => {
         const consultarAPI = async () => {
-            const url='https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD';
+            const url = 'https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym=USD';
 
             const resultado = await axios.get(url);
+
             guardarCriptomonedas(resultado.data.Data);
         }
         consultarAPI();
-    }, [])
+    }, []);
 
 
+    //Cuando el usuario hace submit
+        const cotizarMoneda = e => {
+            e.preventDefault();
+
+            //Validar si ambos campos estan llenos
+            if (moneda === '' || criptomoneda === ''){
+                guardarError(true);
+                return; 
+            }
+
+            //pasar los datos al componente principal
+            guardarError(false);
+            guardarMoneda(moneda);
+            guardarCriptomoneda(criptomoneda);
+        }
+    
         return (
-        <form>
+        <form
+            onSubmit={cotizarMoneda}
+        >
+            {error ? <Error mensaje="Todos los campos son obligatorios"/> : null}
             <SelectMonedas />
 
             <SelectCripto />
